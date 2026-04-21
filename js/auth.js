@@ -4,7 +4,6 @@ const showRegisterBtn = document.getElementById('show-register');
 const showLoginBtn = document.getElementById('show-login');
 const messageBox = document.getElementById('message');
 
-// Переключение между формами входа и регистрации
 showRegisterBtn.addEventListener('click', (e) => { e.preventDefault(); loginForm.classList.add('hidden'); registerForm.classList.remove('hidden'); });
 showLoginBtn.addEventListener('click', (e) => { e.preventDefault(); registerForm.classList.add('hidden'); loginForm.classList.remove('hidden'); });
 
@@ -16,21 +15,20 @@ function showMessage(text, type) {
 }
 
 // РЕГИСТРАЦИЯ
-document.getElementById('register-form').addEventListener('submit', async (e) => {
+registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('reg-name').value.trim();
     const email = document.getElementById('reg-email').value.trim();
     const password = document.getElementById('reg-password').value;
 
     try {
-        const { data, error } = await supabase.auth.signUp({ 
-            email, 
+        const { data, error } = await supabaseClient.auth.signUp({
+            email,
             password,
-            options: { data: { full_name: name } } // Передаём имя для триггера
+            options: { data: { full_name: name } } // Передаём имя в метаданные для триггера БД
         });
         if (error) throw error;
-
-        showMessage('Аккаунт создан! Перенаправляем на панель...', 'success');
+        showMessage('Аккаунт создан! Перенаправляем...', 'success');
         setTimeout(() => window.location.href = 'dashboard.html', 1500);
     } catch (err) {
         showMessage(err.message, 'error');
@@ -38,23 +36,16 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
 });
 
 // ВХОД
-document.getElementById('login-form').addEventListener('submit', async (e) => {
+loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('login-email').value.trim();
     const password = document.getElementById('login-password').value;
 
     try {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
         if (error) throw error;
         window.location.href = 'dashboard.html';
     } catch (err) {
         showMessage(err.message, 'error');
-    }
-});
-
-// Если пользователь уже залогинен, сразу кидаем в панель
-supabase.auth.onAuthStateChange((event, session) => {
-    if (session && window.location.pathname.includes('index.html')) {
-        window.location.href = 'dashboard.html';
     }
 });
