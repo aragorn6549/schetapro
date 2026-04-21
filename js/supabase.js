@@ -1,7 +1,14 @@
-// ⚠️ ВНИМАНИЕ: На следующем шаге мы создадим проект в Supabase.
-// Тогда замени строки ниже на свои реальные данные из настроек Supabase.
+// Проверяем, загрузилась ли библиотека Supabase
+if (typeof supabase === 'undefined') {
+    console.error('❌ Supabase JS не загрузился. Проверьте интернет или CDN.');
+} else {
+    console.log('✅ Supabase JS загружен');
+}
+
+// ⚠️ ВСТАВЬ СЮДА СВОИ ДАННЫЕ (из Supabase → Project Settings → API)
 const SUPABASE_URL = 'https://exqaoxsuqhjgkdzmzhuq.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_cptCfdzxFGF0I9j9FXLMfg_UJSzfkPS';
 
-// Инициализация клиента (работает через CDN, подключенный в HTML)
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Инициализируем клиент и делаем его глобальным
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+window.supabaseClient = supabaseClient;
