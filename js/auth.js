@@ -23,21 +23,15 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
     const password = document.getElementById('reg-password').value;
 
     try {
-        const { data, error } = await supabase.auth.signUp({ email, password });
+        const { data, error } = await supabase.auth.signUp({ 
+            email, 
+            password,
+            options: { data: { full_name: name } } // Передаём имя для триггера
+        });
         if (error) throw error;
 
-        // Сохраняем профиль (таблица profiles создадим на следующем шаге)
-        if (data.user) {
-            const { error: profileError } = await supabase.from('profiles').insert({
-                id: data.user.id,
-                full_name: name,
-                role: 'engineer' // Роль по умолчанию
-            });
-            if (profileError) console.log('⚠️ Таблица profiles пока не создана. Профиль будет добавлен после настройки БД.');
-        }
-
-        showMessage('Аккаунт создан! Проверьте почту для подтверждения.', 'success');
-        setTimeout(() => window.location.reload(), 2000);
+        showMessage('Аккаунт создан! Перенаправляем на панель...', 'success');
+        setTimeout(() => window.location.href = 'dashboard.html', 1500);
     } catch (err) {
         showMessage(err.message, 'error');
     }
