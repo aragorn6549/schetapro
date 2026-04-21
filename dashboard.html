@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>СчетаПро — Панель</title>
     <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body style="padding: 2rem;">
     <div class="dashboard-header">
@@ -18,52 +18,42 @@
     </div>
 
     <div class="content-area">
-        <!-- Инженер -->
         <div id="engineer-panel" class="role-section">
             <h2>🔧 Мои заявки</h2>
-            <button class="btn-action btn-blue" onclick="alert('Модальное окно создания заявки (в разработке)')">+ Новая заявка</button>
+            <button class="btn-action btn-blue" onclick="alert('Форма создания заявки (следующий этап)')">+ Новая заявка</button>
             <table class="mock-table">
                 <thead><tr><th>№</th><th>Поставщик</th><th>Статус</th><th>Действие</th></tr></thead>
-                <tbody><tr><td colspan="4" style="text-align:center; color:var(--text3)">Данные подгрузятся после настройки БД</td></tr></tbody>
+                <tbody><tr><td colspan="4" style="text-align:center; color:var(--text3)">Подключится после создания заявки</td></tr></tbody>
             </table>
         </div>
-
-        <!-- Безопасность -->
         <div id="security-panel" class="role-section">
             <h2>🛡️ Проверка контрагентов</h2>
             <table class="mock-table">
                 <thead><tr><th>ИНН</th><th>Название</th><th>Статус</th><th>Действия</th></tr></thead>
-                <tbody><tr><td colspan="4" style="text-align:center; color:var(--text3)">Данные подгрузятся после настройки БД</td></tr></tbody>
+                <tbody><tr><td colspan="4" style="text-align:center; color:var(--text3)">Ожидает данных</td></tr></tbody>
             </table>
         </div>
-
-        <!-- Директор -->
         <div id="director-panel" class="role-section">
             <h2>👔 Согласование счетов</h2>
             <table class="mock-table">
                 <thead><tr><th>№</th><th>Проект</th><th>Статус</th><th>Действия</th></tr></thead>
-                <tbody><tr><td colspan="4" style="text-align:center; color:var(--text3)">Данные подгрузятся после настройки БД</td></tr></tbody>
+                <tbody><tr><td colspan="4" style="text-align:center; color:var(--text3)">Ожидает данных</td></tr></tbody>
             </table>
         </div>
-
-        <!-- Бухгалтер -->
         <div id="accountant-panel" class="role-section">
             <h2>📒 Согласованные счета</h2>
             <table class="mock-table">
                 <thead><tr><th>№</th><th>Поставщик</th><th>Статус</th><th>Действие</th></tr></thead>
-                <tbody><tr><td colspan="4" style="text-align:center; color:var(--text3)">Данные подгрузятся после настройки БД</td></tr></tbody>
+                <tbody><tr><td colspan="4" style="text-align:center; color:var(--text3)">Ожидает данных</td></tr></tbody>
             </table>
         </div>
-
-        <!-- Админ -->
         <div id="admin-panel" class="role-section">
             <h2>⚙️ Управление системой</h2>
-            <p style="color:var(--text2)">Полный доступ: пользователи, роли, неизменяемый журнал.</p>
+            <p style="color:var(--text2)">Полный доступ: пользователи, роли, журнал.</p>
         </div>
-
         <div id="no-access-panel" class="role-section">
             <h2 style="color:var(--red)">Доступ ограничен</h2>
-            <p>Ваша роль не назначена или требует подтверждения.</p>
+            <p>Роль не назначена или требует подтверждения администратором.</p>
         </div>
     </div>
 
