@@ -2,8 +2,8 @@ let currentUser = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     if (typeof supabaseClient === 'undefined') {
-        console.error('❌ supabaseClient не найден. Проверьте js/supabase.js');
-        document.getElementById('user-role').textContent = 'Ошибка подключения';
+        console.error('Supabase не подключён. Проверь js/supabase.js');
+        document.getElementById('user-role').textContent = 'Ошибка';
         return;
     }
 
@@ -26,7 +26,7 @@ async function loadUserProfile() {
             .single();
 
         if (error || !profile) {
-            console.warn('Профиль не найден, используется роль по умолчанию');
+            console.warn('Профиль не найден, используется роль engineer');
             document.getElementById('user-name').textContent = 'Пользователь';
             document.getElementById('user-role').textContent = 'engineer';
             showPanel('engineer');
@@ -37,8 +37,7 @@ async function loadUserProfile() {
         document.getElementById('user-role').textContent = profile.role;
         showPanel(profile.role);
     } catch (err) {
-        console.error('Ошибка загрузки профиля:', err);
-        document.getElementById('user-name').textContent = 'Ошибка загрузки';
+        console.error('Ошибка профиля:', err);
     }
 }
 
@@ -54,7 +53,6 @@ function showPanel(role) {
     else if (role === 'admin') loadJournal();
 }
 
-// === ИНЖЕНЕР: ЗАГРУЗКА ЗАЯВОК ===
 async function loadRequests() {
     const tbody = document.getElementById('requests-table-body');
     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Загрузка...</td></tr>';
@@ -67,53 +65,37 @@ async function loadRequests() {
 
     if (error) {
         tbody.innerHTML = `<tr><td colspan="6" style="color:var(--red)">Ошибка: ${error.message}</td></tr>`;
-        console.error(error);
         return;
     }
-
-    if (!data || data.length === 0) {
+    if (!data?.length) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Нет заявок. Создайте первую!</td></tr>';
         return;
     }
 
     tbody.innerHTML = '';
     data.forEach(req => {
-        const cls = {
-            'новая': 'status-new',
-            'ожидает директора': 'status-check',
-            'согласован': 'status-approved',
-            'оплачен': 'status-paid'
-        }[req.status] || 'status-new';
-
-        const statusText = req.status || 'новая';
-        const actionBtn = statusText === 'согласован'
-            ? `<button class="btn-action btn-blue pp-btn" data-num="${req.request_number}">Запросить ПП</button>`
+        const cls = { 'новая':'status-new', 'ожидает директора':'status-check', 'согласован':'status-approved', 'оплачен':'status-paid' }[req.status] || 'status-new';
+        const btn = req.status === 'согласован' 
+            ? `<button class="btn-action btn-blue pp-btn" data-num="${req.request_number}">Запросить ПП</button>` 
             : '—';
-
-        tbody.innerHTML += `
-            <tr>
-                <td><strong>${req.request_number}</strong></td>
-                <td>${req.project_name}</td>
-                <td>${req.supplier_id?.name || '—'}</td>
-                <td><a href="${req.invoice_url}" target="_blank" style="color:var(--accent2)">🔗 Открыть</a></td>
-                <td><span class="${cls}">${statusText}</span></td>
-                <td>${actionBtn}</td>
-            </tr>`;
+        tbody.innerHTML += `<tr>
+            <td><strong>${req.request_number}</strong></td>
+            <td>${req.project_name}</td>
+            <td>${req.supplier_id?.name || '—'}</td>
+            <td><a href="${req.invoice_url}" target="_blank" style="color:var(--accent2)">🔗 Открыть</a></td>
+            <td><span class="${cls}">${req.status}</span></td>
+            <td>${btn}</td>
+        </tr>`;
     });
 
     document.querySelectorAll('.pp-btn').forEach(btn => {
         btn.onclick = () => {
-            const text = `Тема: Запрос ПП по счёту № ${btn.dataset.num}\n\nКоллеги, добрый день!\nПрошу оплатить счёт.\nНомер заявки: ${btn.dataset.num}\nСпасибо!`;
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(text).then(() => alert('✅ Текст скопирован в буфер обмена!'));
-            } else {
-                prompt('Скопируйте текст:', text);
-            }
+            const text = `Запрос ПП\nСчёт: ${btn.dataset.num}\nПрошу оплатить. Спасибо!`;
+            navigator.clipboard?.writeText(text).then(() => alert('Текст скопирован!'));
         };
     });
 }
 
-// === МОДАЛЬНОЕ ОКНО И СОЗДАНИЕ ЗАЯВКИ ===
 document.getElementById('btn-new-request')?.addEventListener('click', () => {
     document.getElementById('request-modal').classList.remove('hidden');
     loadSuppliers();
@@ -125,105 +107,65 @@ document.getElementById('close-modal')?.addEventListener('click', () => {
 });
 
 document.getElementById('req-supplier')?.addEventListener('change', (e) => {
-    const isNew = e.target.value === 'new';
-    document.getElementById('new-supplier-fields').classList.toggle('hidden', !isNew);
+    document.getElementById('new-supplier-fields').classList.toggle('hidden', e.target.value !== 'new');
 });
 
 async function loadSuppliers() {
     const sel = document.getElementById('req-supplier');
     sel.innerHTML = '<option value="">Выберите контрагента</option><option value="new">+ Добавить нового</option>';
-
-    const { data, error } = await supabaseClient
-        .from('counterparties')
-        .select('id, name, inn')
-        .eq('status', 'одобрен')
-        .order('name');
-
-    if (!error && data) {
-        data.forEach(s => {
-            const opt = document.createElement('option');
-            opt.value = s.id;
-            opt.textContent = `${s.name} (ИНН: ${s.inn})`;
-            sel.appendChild(opt);
-        });
-    }
+    const { data } = await supabaseClient.from('counterparties').select('id, name, inn').eq('status', 'одобрен').order('name');
+    data?.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.id;
+        opt.textContent = `${s.name} (ИНН: ${s.inn})`;
+        sel.appendChild(opt);
+    });
 }
 
 document.getElementById('request-form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const msg = document.getElementById('req-message');
-
     const project = document.getElementById('req-project').value.trim();
     const deal = document.getElementById('req-deal').value.trim();
     const invoice = document.getElementById('req-invoice').value.trim();
     const url = document.getElementById('req-url').value.trim();
     const supId = document.getElementById('req-supplier').value;
 
-    if (!project || !deal || !invoice || !url || !supId) {
-        showMsg(msg, 'Заполните все обязательные поля', 'error');
-        return;
-    }
+    if (!project || !deal || !invoice || !url || !supId) { showMsg(msg, 'Заполните все поля', 'error'); return; }
 
     try {
         let finalSupId = supId;
         if (supId === 'new') {
             const inn = document.getElementById('new-sup-inn').value.trim();
             const name = document.getElementById('new-sup-name').value.trim();
-            if (!inn || !name) throw new Error('Укажите ИНН и название нового контрагента');
-
-            const { data: ns, error: se } = await supabaseClient
-                .from('counterparties')
-                .insert({ inn, name, status: 'на проверке', created_by: currentUser.id })
-                .select()
-                .single();
-
+            if (!inn || !name) throw new Error('Укажите ИНН и название');
+            const { data: ns, error: se } = await supabaseClient.from('counterparties').insert({ inn, name, status: 'на проверке', created_by: currentUser.id }).select().single();
             if (se) throw se;
             finalSupId = ns.id;
         }
 
-        const { data: existing } = await supabaseClient
-            .from('requests')
-            .select('id')
-            .ilike('project_name', project)
-            .eq('deal_number', deal);
-
+        const { data: existing } = await supabaseClient.from('requests').select('id').ilike('project_name', project).eq('deal_number', deal);
         const seq = String((existing?.length || 0) + 1).padStart(3, '0');
         const reqNum = `${project}_${deal}_${seq}`;
 
-        const { data: reqData, error: re } = await supabaseClient
-            .from('requests')
-            .insert({
-                project_name: project,
-                deal_number: deal,
-                request_number: reqNum,
-                invoice_number: invoice,
-                invoice_url: url,
-                supplier_id: finalSupId,
-                status: 'новая',
-                created_by: currentUser.id
-            })
-            .select()
-            .single();
-
+        const { data: reqData, error: re } = await supabaseClient.from('requests').insert({
+            project_name: project, deal_number: deal, request_number: reqNum,
+            invoice_number: invoice, invoice_url: url, supplier_id: finalSupId,
+            status: 'новая', created_by: currentUser.id
+        }).select().single();
         if (re) throw re;
 
-        await supabaseClient.from('journal').insert({
-            action: `Создана заявка ${reqNum}`,
-            entity_type: 'request',
-            entity_id: reqData.id,
-            user_id: currentUser.id
-        });
+        await supabaseClient.from('journal').insert({ action: `Создана заявка ${reqNum}`, entity_type: 'request', entity_id: reqData.id, user_id: currentUser.id });
 
-        showMsg(msg, '✅ Заявка успешно создана!', 'success');
+        showMsg(msg, '✅ Заявка создана!', 'success');
         setTimeout(() => {
             document.getElementById('request-modal').classList.add('hidden');
             document.getElementById('request-form').reset();
             document.getElementById('new-supplier-fields').classList.add('hidden');
             loadRequests();
-        }, 1500);
+        }, 1200);
     } catch (err) {
-        showMsg(msg, err.message || 'Ошибка при создании заявки', 'error');
-        console.error(err);
+        showMsg(msg, err.message, 'error');
     }
 });
 
@@ -234,22 +176,9 @@ function showMsg(el, text, type) {
     setTimeout(() => el.classList.add('hidden'), 3000);
 }
 
-// === ЗАГЛУШКИ ДЛЯ ДРУГИХ РОЛЕЙ ===
-function loadCounterparties() {
-    document.getElementById('security-table-body').innerHTML = '<tr><td colspan="4" style="text-align:center">Панель безопасности (в разработке)</td></tr>';
-}
-function loadDirectorRequests() {
-    document.getElementById('director-table-body').innerHTML = '<tr><td colspan="5" style="text-align:center">Панель директора (в разработке)</td></tr>';
-}
-function loadAccountantRequests() {
-    document.getElementById('accountant-table-body').innerHTML = '<tr><td colspan="4" style="text-align:center">Панель бухгалтера (в разработке)</td></tr>';
-}
-function loadJournal() {
-    document.getElementById('admin-journal-body').innerHTML = '<tr><td colspan="3" style="text-align:center">Журнал действий (в разработке)</td></tr>';
-}
+function loadCounterparties() { document.getElementById('security-table-body').innerHTML = '<tr><td colspan="4" style="text-align:center">Панель безопасности</td></tr>'; }
+function loadDirectorRequests() { document.getElementById('director-table-body').innerHTML = '<tr><td colspan="5" style="text-align:center">Панель директора</td></tr>'; }
+function loadAccountantRequests() { document.getElementById('accountant-table-body').innerHTML = '<tr><td colspan="4" style="text-align:center">Панель бухгалтера</td></tr>'; }
+function loadJournal() { document.getElementById('admin-journal-body').innerHTML = '<tr><td colspan="3" style="text-align:center">Журнал</td></tr>'; }
 
-// Выход
-document.getElementById('logout')?.addEventListener('click', async () => {
-    await supabaseClient.auth.signOut();
-    window.location.href = 'index.html';
-});
+document.getElementById('logout')?.addEventListener('click', async () => { await supabaseClient.auth.signOut(); window.location.href = 'index.html'; });
