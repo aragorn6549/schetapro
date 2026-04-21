@@ -18,7 +18,6 @@
     </div>
 
     <div class="content-area">
-        <!-- ИНЖЕНЕР -->
         <div id="engineer-panel" class="role-section">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                 <h2>🔧 Мои заявки</h2>
@@ -30,41 +29,16 @@
             </table>
         </div>
 
-        <!-- БЕЗОПАСНОСТЬ -->
-        <div id="security-panel" class="role-section">
-            <h2>🛡️ Проверка контрагентов</h2>
-            <table class="mock-table"><thead><tr><th>ИНН</th><th>Название</th><th>Статус</th><th>Действия</th></tr></thead><tbody id="security-table-body"><tr><td colspan="4" style="text-align:center; color:var(--text3)">Ожидает данных</td></tr></tbody></table>
-        </div>
-
-        <!-- ДИРЕКТОР -->
-        <div id="director-panel" class="role-section">
-            <h2>👔 Согласование счетов</h2>
-            <table class="mock-table"><thead><tr><th>№</th><th>Проект</th><th>Инженер</th><th>Статус</th><th>Действия</th></tr></thead><tbody id="director-table-body"><tr><td colspan="5" style="text-align:center; color:var(--text3)">Ожидает данных</td></tr></tbody></table>
-        </div>
-
-        <!-- БУХГАЛТЕР -->
-        <div id="accountant-panel" class="role-section">
-            <h2>📒 Согласованные счета</h2>
-            <table class="mock-table"><thead><tr><th>№</th><th>Поставщик</th><th>Статус</th><th>Действие</th></tr></thead><tbody id="accountant-table-body"><tr><td colspan="4" style="text-align:center; color:var(--text3)">Ожидает данных</td></tr></tbody></table>
-        </div>
-
-        <!-- АДМИН -->
-        <div id="admin-panel" class="role-section">
-            <h2>⚙️ Управление системой</h2>
-            <p style="color:var(--text2)">Журнал действий и управление пользователями (в разработке)</p>
-            <table class="mock-table"><thead><tr><th>Время</th><th>Пользователь</th><th>Действие</th></tr></thead><tbody id="admin-journal-body"><tr><td colspan="3" style="text-align:center; color:var(--text3)">Ожидает данных</td></tr></tbody></table>
-        </div>
-
-        <div id="no-access-panel" class="role-section">
-            <h2 style="color:var(--red)">Доступ ограничен</h2>
-            <p>Ваша роль не назначена или требует подтверждения.</p>
-        </div>
+        <div id="security-panel" class="role-section"><h2>🛡️ Проверка контрагентов</h2><table class="mock-table"><thead><tr><th>ИНН</th><th>Название</th><th>Статус</th><th>Действия</th></tr></thead><tbody id="security-table-body"><tr><td colspan="4" style="text-align:center; color:var(--text3)">Ожидает данных</td></tr></tbody></table></div>
+        <div id="director-panel" class="role-section"><h2>👔 Согласование счетов</h2><table class="mock-table"><thead><tr><th>№</th><th>Проект</th><th>Инженер</th><th>Статус</th><th>Действия</th></tr></thead><tbody id="director-table-body"><tr><td colspan="5" style="text-align:center; color:var(--text3)">Ожидает данных</td></tr></tbody></table></div>
+        <div id="accountant-panel" class="role-section"><h2>📒 Согласованные счета</h2><table class="mock-table"><thead><tr><th>№</th><th>Поставщик</th><th>Статус</th><th>Действие</th></tr></thead><tbody id="accountant-table-body"><tr><td colspan="4" style="text-align:center; color:var(--text3)">Ожидает данных</td></tr></tbody></table></div>
+        <div id="admin-panel" class="role-section"><h2>⚙️ Управление системой</h2><p style="color:var(--text2); margin-bottom:1rem">Журнал действий и управление пользователями</p><table class="mock-table"><thead><tr><th>Время</th><th>Пользователь</th><th>Действие</th></tr></thead><tbody id="admin-journal-body"><tr><td colspan="3" style="text-align:center; color:var(--text3)">Ожидает данных</td></tr></tbody></table></div>
+        <div id="no-access-panel" class="role-section"><h2 style="color:var(--red)">Доступ ограничен</h2><p>Ваша роль не назначена или требует подтверждения.</p></div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО СОЗДАНИЯ ЗАЯВКИ -->
     <div id="request-modal" class="modal hidden">
         <div class="modal-content">
-            <span id="close-modal" class="modal-close">&times;</span>
+            <button id="close-modal" class="modal-close">&times;</button>
             <h2>Новая заявка</h2>
             <form id="request-form" class="form">
                 <input type="text" id="req-project" placeholder="Название проекта (например: CRM)" required>
