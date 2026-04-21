@@ -18,6 +18,7 @@
     </div>
 
     <div class="content-area">
+        <!-- ИНЖЕНЕР -->
         <div id="engineer-panel" class="role-section">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                 <h2>🔧 Мои заявки</h2>
@@ -25,33 +26,69 @@
             </div>
             <table class="mock-table">
                 <thead><tr><th>№ Заявки</th><th>Проект</th><th>Поставщик</th><th>Счёт</th><th>Статус</th><th>Действие</th></tr></thead>
-                <tbody id="requests-table-body"><tr><td colspan="6" style="text-align:center; color:var(--text3)">Загрузка...</td></tr></tbody>
+                <tbody id="requests-table-body"><tr><td colspan="6">Загрузка...</td></tr></tbody>
             </table>
         </div>
 
-        <div id="security-panel" class="role-section"><h2>🛡️ Проверка контрагентов</h2><table class="mock-table"><thead><tr><th>ИНН</th><th>Название</th><th>Статус</th><th>Действия</th></tr></thead><tbody id="security-table-body"><tr><td colspan="4" style="text-align:center; color:var(--text3)">Ожидает данных</td></tr></tbody></table></div>
-        <div id="director-panel" class="role-section"><h2>👔 Согласование счетов</h2><table class="mock-table"><thead><tr><th>№</th><th>Проект</th><th>Инженер</th><th>Статус</th><th>Действия</th></tr></thead><tbody id="director-table-body"><tr><td colspan="5" style="text-align:center; color:var(--text3)">Ожидает данных</td></tr></tbody></table></div>
-        <div id="accountant-panel" class="role-section"><h2>📒 Согласованные счета</h2><table class="mock-table"><thead><tr><th>№</th><th>Поставщик</th><th>Статус</th><th>Действие</th></tr></thead><tbody id="accountant-table-body"><tr><td colspan="4" style="text-align:center; color:var(--text3)">Ожидает данных</td></tr></tbody></table></div>
-        <div id="admin-panel" class="role-section"><h2>⚙️ Управление системой</h2><p style="color:var(--text2); margin-bottom:1rem">Журнал действий и управление пользователями</p><table class="mock-table"><thead><tr><th>Время</th><th>Пользователь</th><th>Действие</th></tr></thead><tbody id="admin-journal-body"><tr><td colspan="3" style="text-align:center; color:var(--text3)">Ожидает данных</td></tr></tbody></table></div>
-        <div id="no-access-panel" class="role-section"><h2 style="color:var(--red)">Доступ ограничен</h2><p>Ваша роль не назначена или требует подтверждения.</p></div>
+        <!-- БЕЗОПАСНОСТЬ -->
+        <div id="security-panel" class="role-section">
+            <h2>🛡️ Проверка контрагентов</h2>
+            <table class="mock-table">
+                <thead><tr><th>ИНН</th><th>Название</th><th>Статус</th><th>Действия</th></tr></thead>
+                <tbody id="security-table-body"><tr><td colspan="4">Загрузка...</td></tr></tbody>
+            </table>
+        </div>
+
+        <!-- ДИРЕКТОР -->
+        <div id="director-panel" class="role-section">
+            <h2>👔 Согласование счетов</h2>
+            <table class="mock-table">
+                <thead><tr><th>№ Заявки</th><th>Проект</th><th>Поставщик</th><th>ИНН</th><th>Статус</th><th>Действия</th></tr></thead>
+                <tbody id="director-table-body"><tr><td colspan="6">Загрузка...</td></tr></tbody>
+            </table>
+        </div>
+
+        <!-- БУХГАЛТЕР -->
+        <div id="accountant-panel" class="role-section">
+            <h2>📒 Согласованные счета</h2>
+            <table class="mock-table">
+                <thead><tr><th>№ Заявки</th><th>Поставщик</th><th>Сумма</th><th>Статус</th><th>Действие</th></tr></thead>
+                <tbody id="accountant-table-body"><tr><td colspan="5">Загрузка...</td></tr></tbody>
+            </table>
+        </div>
+
+        <!-- АДМИН -->
+        <div id="admin-panel" class="role-section">
+            <h2>⚙️ Журнал действий</h2>
+            <table class="mock-table">
+                <thead><tr><th>Время</th><th>Пользователь</th><th>Действие</th><th>Объект</th></tr></thead>
+                <tbody id="admin-journal-body"><tr><td colspan="4">Загрузка...</td></tr></tbody>
+            </table>
+        </div>
+
+        <div id="no-access-panel" class="role-section">
+            <h2 style="color:var(--red)">Доступ ограничен</h2>
+            <p>Ваша роль не назначена или требует подтверждения администратором.</p>
+        </div>
     </div>
 
+    <!-- МОДАЛЬНОЕ ОКНО ЗАЯВКИ -->
     <div id="request-modal" class="modal hidden">
         <div class="modal-content">
             <button id="close-modal" class="modal-close">&times;</button>
             <h2>Новая заявка</h2>
             <form id="request-form" class="form">
-                <input type="text" id="req-project" placeholder="Название проекта (например: CRM)" required>
-                <input type="text" id="req-deal" placeholder="Номер сделки (например: 452)" required>
+                <input type="text" id="req-project" placeholder="Название проекта (CRM, ERP...)" required>
+                <input type="text" id="req-deal" placeholder="Номер сделки" required>
                 <input type="text" id="req-invoice" placeholder="Номер счёта поставщика" required>
-                <input type="url" id="req-url" placeholder="Ссылка на файл счёта (https://...)" required>
+                <input type="url" id="req-url" placeholder="https://... ссылка на счёт" required>
                 <select id="req-supplier" required>
-                    <option value="">Загрузка контрагентов...</option>
-                    <option value="new">+ Добавить нового</option>
+                    <option value="">Загрузка...</option>
+                    <option value="new">+ Добавить нового контрагента</option>
                 </select>
                 <div id="new-supplier-fields" class="hidden">
-                    <input type="text" id="new-sup-inn" placeholder="ИНН нового контрагента">
-                    <input type="text" id="new-sup-name" placeholder="Название нового контрагента">
+                    <input type="text" id="new-sup-inn" placeholder="ИНН">
+                    <input type="text" id="new-sup-name" placeholder="Название организации">
                 </div>
                 <button type="submit">Создать заявку</button>
             </form>
